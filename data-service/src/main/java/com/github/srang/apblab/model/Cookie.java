@@ -1,4 +1,7 @@
-package com.github.srang.apblab.model
+package com.github.srang.apblab.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.io.Serializable;
 
@@ -19,7 +22,7 @@ public class Cookie implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String name:
+    private String name;
     private int inventory;
     private String location;
 

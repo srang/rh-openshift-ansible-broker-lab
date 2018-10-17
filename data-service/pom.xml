@@ -13,68 +13,61 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>jboss-public-repository-group</id>
-            <name>JBoss Public Repository Group</name>
-            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <properties>
-        <version.thorntail>2.3.0.Final</version.thorntail>
-
-        <maven.min.version>3.2.1</maven.min.version>
+        <version.thorntail>2.2.0.Final</version.thorntail>
         <!--TODO make sure this is still correct property (swarm is old name) -->
-        <wildfly-swarm.useUberJar>true</wildfly-swarm.useUberJar>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-
+        <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.thorntail</groupId>
-            <artifactId>microprofile</artifactId>
-        </dependency>
-        <!-- TODO mysql stuff -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.4</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.thorntail</groupId>
-                <artifactId>bom-all</artifactId>
+                <artifactId>bom</artifactId>
                 <version>${version.thorntail}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>io.thorntail</groupId>-->
+            <!--<artifactId>microprofile</artifactId>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>jsonp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>microprofile-health</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.thorntail</groupId>
+            <artifactId>microprofile-metrics</artifactId>
+        </dependency>
+        <!-- TODO mysql stuff -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.22</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
 
     <build>
         <finalName>data-service</finalName>
@@ -92,6 +85,9 @@
                 <executions>
                     <execution>
                         <id>package</id>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
                     </execution>
                     <execution>
                         <id>start</id>
@@ -101,31 +97,39 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>fabric8-maven-plugin</artifactId>
-                <!-- TODO make sure still correct version -->
-                <version>3.5.40</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>resource</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <generator>
-                        <includes>
-                            <include>thorntail-v2</include>
-                        </includes>
-                        <config>
-                            <thorntail>
-                                <from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift</from>
-                            </thorntail>
-                        </config>
-                    </generator>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>openshift</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>fabric8-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>resource</goal>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <!--<configuration>-->
+                            <!--<generator>-->
+                                <!--<includes>-->
+                                    <!--<include>thorntail-v2</include>-->
+                                <!--</includes>-->
+                                <!--<config>-->
+                                    <!--<thorntail>-->
+                                        <!--<from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift</from>-->
+                                    <!--</thorntail>-->
+                                <!--</config>-->
+                            <!--</generator>-->
+                        <!--</configuration>-->
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
