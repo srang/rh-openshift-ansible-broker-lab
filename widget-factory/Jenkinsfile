@@ -71,7 +71,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.tag("${env.NAMESPACE}/${env.APPLICATION_NAME}:latest", "${env.NAMESPACE}/${env.APP_NAME}:${APPLICATION_RELEASE}")
+                        openshift.tag("${env.NAMESPACE}/${env.APPLICATION_NAME}:latest", "${env.NAMESPACE}/${env.APPLICATION_NAME}:${APPLICATION_RELEASE}")
                     }
                 }
             }
@@ -81,7 +81,7 @@ pipeline {
             steps {
                 script {
                     openshift.withCluster() {
-                        openshift.withProject("${STAGE1}") {
+                        openshift.withProject(NAMESPACE) {
                             def dcObj = openshift.selector('deployment', env.APPLICATION_NAME).object()
                             def podSelector = openshift.selector('pod', [deployment: "${APPLICATION_NAME}-${dcObj.status.latestVersion}"])
                             podSelector.untilEach {
